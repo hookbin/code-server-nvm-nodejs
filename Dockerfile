@@ -15,34 +15,23 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Set locale
-RUN locale-gen en_US.UTF-8
-RUN bash --version | head -n 1
-RUN zsh --version
-RUN ksh --version || true
-RUN dpkg -s dash | grep ^Version | awk '{print $2}'
-RUN git --version
-RUN curl --version
-RUN wget --version
-RUN useradd -ms /bin/bash nvm
-COPY . /home/nvm/.nvm/
-RUN chown nvm:nvm -R "/home/nvm/.nvm"
-RUN echo 'nvm ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
-USER nvm
-ENV BASH_ENV /config/.bash_env
-RUN touch "$BASH_ENV"
-RUN echo '. "$BASH_ENV"' >> "$HOME/.bashrc"
-RUN echo 'export NVM_DIR="$HOME/.nvm"'                                       >> "$BASH_ENV"
-RUN echo '[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm' >> "$BASH_ENV"
-RUN echo '[ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion" # This loads nvm bash_completion' >> "$BASH_ENV"
+# Create a script file sourced by both interactive and non-interactive bash shells
+ENV BASH_ENV=/config/.bash_env
+RUN touch "${BASH_ENV}"
+RUN echo '. "${BASH_ENV}"' >> ~/.bashrc
 
-# 加载 nvm 并安装 Node.js v20.11.1
+# 安装 nvm 并配置环境变量
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | PROFILE="${BASH_ENV}" bash
-RUN echo node > .nvmrc
-RUN nvm install 20.11.1
-RUN nvm use 20.11.1
-RUN nvm alias default 20.11.1
+RUN echo "export NVM_DIR=\"/root/.nvm\"" >> "${BASH_ENV}"
+RUN echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> "${BASH_ENV}"
+RUN echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"' >> "${BASH_ENV}"
 
-# 可选：验证 Node.js 和 npm 版本
-RUN node -v && npm -v
+# 加载 nvm 环境变量并安装 Node.js v20.11.1
+RUN source "${BASH_ENV}" && nvm install 20.11.1
+RUN source "${BASH_ENV}" && nvm use 20.11.1
+RUN source "${BASH_ENV}" && nvm alias default 20.11.1
+
+# 验证 Node.js 和 npm 版本
+RUN source "${BASH_ENV}" node -v && npm -v
 
 EXPOSE 8443
