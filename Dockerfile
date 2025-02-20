@@ -5,23 +5,24 @@ FROM linuxserver/code-server:latest
 RUN apt-get update && apt-get install -y \
     curl \
     git \
-    bash \
     build-essential \
     libssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# 安装 nvm
+# 设置环境变量
+ENV NVM_DIR=/root/.nvm
+
+# 下载并安装 nvm
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
 
 # 配置 nvm 环境变量
-ENV NVM_DIR=/root/.nvm
 ENV PATH=${NVM_DIR}/versions/node/v20.11.1/bin:${PATH}
 
-# 加载 nvm 脚本
-RUN [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-
-# 使用 nvm 安装 Node.js v20.11.1
-RUN [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && nvm install 20.11.1 && nvm use 20.11.1
+# 加载 nvm 并安装 Node.js v20.11.1
+RUN . $NVM_DIR/nvm.sh \
+    && nvm install 20.11.1 \
+    && nvm use 20.11.1 \
+    && nvm alias default 20.11.1
 
 # 可选：验证 Node.js 和 npm 版本
 RUN node -v && npm -v
