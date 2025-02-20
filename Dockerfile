@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
     
 # Create a script file sourced by both interactive and non-interactive bash shells
-ENV BASH_ENV=/home/root/.bash_env
+ENV BASH_ENV=/config/.bash_env
 RUN touch "${BASH_ENV}"
 RUN echo '. "${BASH_ENV}"' >> ~/.bashrc
 
