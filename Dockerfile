@@ -1,5 +1,5 @@
 # 使用官方的 linuxserver/code-server 基础镜像
-FROM linuxserver/code-server:latest
+FROM linuxserver/code-server:4.96.4-ls254
 
 # Set the SHELL to bash with pipefail option
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
