@@ -1,9 +1,6 @@
 # 使用官方的 linuxserver/code-server 基础镜像
 FROM linuxserver/code-server:latest
 
-# 基于 linuxserver/code-server:latest 镜像
-FROM linuxserver/code-server:latest
-
 # 安装 nvm 所需的依赖
 RUN apt-get update && apt-get install -y \
     curl \
