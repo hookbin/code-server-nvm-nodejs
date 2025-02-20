@@ -27,5 +27,4 @@ RUN nvm alias default 20.11.1
 # 可选：验证 Node.js 和 npm 版本
 RUN node -v && npm -v
 
-# 启动 code-server
-CMD ["code-server"]
+EXPOSE 8443
